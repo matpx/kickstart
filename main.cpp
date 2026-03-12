@@ -1,16 +1,16 @@
 #define GLAD_GL_IMPLEMENTATION
-#include "libs/glad/gl43.h"
+#include "glad/gl43.h"
 
 #define SOKOL_IMPL
 #define SOKOL_GLCORE
 #define SOKOL_EXTERNAL_GL_LOADER
-#include "libs/sokol/sokol_gfx.h"
-#include "libs/sokol/util/sokol_gl.h"
+#include "sokol/sokol_gfx.h"
+#include "sokol/util/sokol_gl.h"
 
 #define RGFW_IMPLEMENTATION
 #define RGFW_USE_XDL
 #define RGFW_OPENGL
-#include "libs/RGFW/RGFW.h"
+#include "RGFW/RGFW.h"
 
 int main() {
     RGFW_glHints hints = {};
