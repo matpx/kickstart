@@ -1,0 +1,4 @@
+examples/viewer/viewer
+test/tinyobj_*_tests
+*.dSYM
+*.o
