@@ -1,5 +1,5 @@
 CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++20 -nostdlib++ -fno-rtti -fno-exceptions
+CXXFLAGS := -Wall -Wextra -std=c++20 -nostdlib++ -fno-rtti -fno-exceptions -isystem libs/
 LDFLAGS := -nostdlib++ -lm
 
 SRC := \
