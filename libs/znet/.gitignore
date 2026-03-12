@@ -1,0 +1,11 @@
+deprecated
+.vscode
+*.exe
+*.dll
+*.so
+*.dSYM
+*.exp
+*.lib
+*.obj
+*.iobj
+*.ipdb

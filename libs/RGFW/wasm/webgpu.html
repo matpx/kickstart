@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://colleagueriley.github.io/style.css">  
+    <title>RGFW wasm Examples</title>
+</head>
+<body> 
+    <header>
+        <a href="../index.html"> <img src="../logo.png" alt="RGFW logo"/> </a>
+        <h2>RGFW wasm Examples</h2> 
+        <nav>
+            <a href="./docs/index.html"> Doxygen Docs </a>
+            <a href="./wasm/downloads.html"> Download </a>
+            <a href="https://github.com/ColleagueRiley/RGFW/blob/main/examples/webgpu/webgpu.c">Source Code </a>
+        </nav>
+        <br/>  <br/>
+    </header>
+
+    <div class="canvas"> <canvas id="canvas"> </canvas> </div>
+
+
+<script type='text/javascript'>
+        var Module = {
+            print: (function() {
+                return (text) => {console.log(text);
+            };
+            })(),
+            canvas: (function() {
+                return document.getElementById('canvas');
+            })(),
+        };
+
+        initWebGPU = async () => {
+            // Check to ensure the user agent supports WebGPU
+            if (!('gpu' in navigator)) {
+                const msg = '⚠️ WebGPU is not available on this browser.';
+
+                const pre = document.createElement('pre');
+                pre.style.color = '#f00';
+                pre.style.textAlign = 'center';
+                pre.textContent = msg;
+                document.body.appendChild(pre);
+
+                console.error(msg);
+
+                return false;
+            }
+
+            // Request an adapter
+            const adapter = await navigator.gpu.requestAdapter();
+            if (!adapter) {
+                console.error('No WebGPU adapters found.');
+                return false;
+            }
+
+            // Request a device
+            const device  = await adapter.requestDevice();
+            device.lost.then((info) => {
+                console.error(`WebGPU device was lost: ${info.message}`);
+                device = null;
+
+                if (info.reason != 'destroyed') {
+                    initWebGPU();
+                }
+            });
+
+            // Set WebGPU device in Module
+            Module.preinitializedWebGPUDevice = device;
+
+            return true;
+        }
+
+        initWebGPU();
+  </script>
+
+  <script async src="../examples/webgpu/webgpu.js"> </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+      if (document.querySelector('Component') == null) {
+        var script = document.querySelector('script[src="../examples/webgpu/webgpu.js"]')
+        document.head.removeChild(script)
+      }
+    }); 
+  </script>
+
+  <script async src="../webgpu.js"> </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+      if (document.querySelector('Component') == null) {
+        var script = document.querySelector('script[src="../webgpu.js"]')
+        document.head.removeChild(script)
+      }
+    }); 
+  </script>
+
+  <div id="log"></div>
+
+  <script>
+    (function () {
+      var logContainer = document.getElementById('log');
+      var originalLog = console.log;
+
+      console.log = function (message) {
+        if (typeof message === 'object') {
+          message = JSON.stringify(message, null, 2);
+        }
+        logContainer.innerHTML += message + '\n';
+        logContainer.scrollTop = logContainer.scrollHeight; // Auto-scroll to the bottom
+        originalLog.apply(console, arguments);
+      };
+    })();
+  </script>
+</body>
+
+</html>

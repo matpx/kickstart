@@ -1,0 +1,167 @@
+name: build
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build-windows-msvc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+        # this runs vcvarsall for us, so we get the MSVC toolchain in PATH.
+      - uses: seanmiddleditch/gha-setup-vsdevenv@master
+      - name: build cstr.h
+        run: |
+          cl /Tc cstr.h /DCSTR_IMPLEMENTATION /DCSTR_RUN_TESTS /MTd
+      - name: run cstr tests
+        run: .\cstr.exe
+      - name: build assetsys.h
+        run: |
+          cl /Tc assetsys.h /DASSETSYS_IMPLEMENTATION /DASSETSYS_RUN_TESTS /DSTRPOOL_IMPLEMENTATION /MTd
+      - name: run assetsys tests
+        run: .\assetsys.exe
+      - name: build vecmath.h 
+        run: |
+          cl /nologo /Fevecmath_msvc.exe /std:c11 /Wall /wd5045 /MTd -DVECMATH_RUN_TESTS -DVECMATH_USE_EXTERNAL_TESTFW -DVECMATH_GENERICS /Tc vecmath.h 
+      - name: run vecmath tests
+        run: .\vecmath_msvc.exe
+  build-windows-msvc-cpp:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+        # this runs vcvarsall for us, so we get the MSVC toolchain in PATH.
+      - uses: seanmiddleditch/gha-setup-vsdevenv@master
+      - name: build cstr.h
+        run: |
+          cl /Tp cstr.h /DCSTR_IMPLEMENTATION /DCSTR_RUN_TESTS /MTd
+      - name: run cstr tests
+        run: .\cstr.exe
+      - name: build assetsys.h
+        run: |
+          cl /Tp assetsys.h /DASSETSYS_IMPLEMENTATION /DASSETSYS_RUN_TESTS /DSTRPOOL_IMPLEMENTATION /MTd
+      - name: run assetsys tests
+        run: .\assetsys.exe
+      - name: build vecmath.h 
+        run: |
+          cl /nologo /Fevecmath_msvcpp.exe /std:c11 /Wall /wd5045 /wd4514 /MTd -DVECMATH_RUN_TESTS -DVECMATH_USE_EXTERNAL_TESTFW -DVECMATH_GENERICS /Tp vecmath.h
+      - name: run vecmath tests
+        run: .\vecmath_msvcpp.exe
+  build-windows-tcc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: robinraju/release-downloader@v1
+        with:
+          repository: "mattiasgustavsson/tcc-build"
+          tag: "tcc64"
+          fileName: "tcc-0.9.27-win64-bin.zip"
+      - name: install dependencies
+        run: 7z x tcc-0.9.27-win64-bin.zip
+      - name: build cstr.h
+        run: |
+          tcc\tcc -xc cstr.h -DCSTR_IMPLEMENTATION -DCSTR_RUN_TESTS
+      - name: run cstr tests
+        run: .\cstr.exe
+      - name: build assetsys.h
+        run: |
+          tcc\tcc -xc assetsys.h -DASSETSYS_IMPLEMENTATION -DASSETSYS_RUN_TESTS -DSTRPOOL_IMPLEMENTATION
+      - name: run assetsys tests
+        run: .\assetsys.exe
+      - name: build vecmath.h
+        run: |
+          tcc\tcc -Wall -o vecmath_tcc.exe -DVECMATH_RUN_TESTS -DVECMATH_USE_EXTERNAL_TESTFW -DVECMATH_GENERICS -xc vecmath.h 
+      - name: run vecmath tests
+        run: .\vecmath_tcc.exe
+  build-macos:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: build cstr.h
+        run: |
+          clang -xc cstr.h -DCSTR_IMPLEMENTATION -DCSTR_RUN_TESTS
+      - name: run cstr tests
+        run: ./a.out
+      - name: build assetsys.h
+        run: |
+          clang -xc assetsys.h -DASSETSYS_IMPLEMENTATION -DASSETSYS_RUN_TESTS -DSTRPOOL_IMPLEMENTATION
+      - name: run assetsys tests
+        run: ./a.out
+      - name: build vecmath.h
+        run: |
+          clang -Wall -pedantic -Wno-invalid-utf8 -Wno-gnu-zero-variadic-macro-arguments -o vecmath_clang -DVECMATH_RUN_TESTS -DVECMATH_USE_EXTERNAL_TESTFW -DVECMATH_GENERICS -DVECMATH_EXT_VECTOR_TYPE -xc vecmath.h
+      - name: run vecmath tests
+        run: ./vecmath_clang
+  build-macos-cpp:
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: build cstr.h
+        run: |
+          clang -xc++ cstr.h -DCSTR_IMPLEMENTATION -DCSTR_RUN_TESTS
+      - name: run cstr tests
+        run: ./a.out
+      - name: build assetsys.h
+        run: |
+          clang -xc++ assetsys.h -DASSETSYS_IMPLEMENTATION -DASSETSYS_RUN_TESTS -DSTRPOOL_IMPLEMENTATION
+      - name: run assetsys tests
+        run: ./a.out
+      - name: build vecmath.h
+        run: |
+          clang++ -Wall -pedantic -Wno-invalid-utf8 -Wno-gnu-zero-variadic-macro-arguments -Wno-extra-semi -o vecmath_clangcpp -DVECMATH_RUN_TESTS -DVECMATH_USE_EXTERNAL_TESTFW -DVECMATH_GENERICS -xc++ vecmath.h  -Wno-everything -Wno-deprecated-declarations
+      - name: run vecmath tests
+        run: ./vecmath_clangcpp
+  build-linux-gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: build cstr.h
+        run: |
+          gcc -xc cstr.h -DCSTR_IMPLEMENTATION -DCSTR_RUN_TESTS
+      - name: run cstr tests
+        run: ./a.out
+      - name: build assetsys.h
+        run: |
+          gcc -xc assetsys.h -DASSETSYS_IMPLEMENTATION -DASSETSYS_RUN_TESTS -DSTRPOOL_IMPLEMENTATION
+      - name: run assetsys tests
+        run: ./a.out
+      - name: build vecmath.h
+        run: |
+          gcc -Wall -pedantic -Wno-invalid-utf8 -Wno-gnu-zero-variadic-macro-arguments -o vecmath_gcc -DVECMATH_RUN_TESTS -DVECMATH_USE_EXTERNAL_TESTFW -DVECMATH_GENERICS -xc vecmath.h -lm 
+      - name: run vecmath tests
+        run: ./vecmath_gcc
+  build-linux-gcc-cpp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: build cstr.h
+        run: |
+          gcc -xc++ cstr.h -DCSTR_IMPLEMENTATION -DCSTR_RUN_TESTS
+      - name: run cstr tests
+        run: ./a.out
+      - name: build assetsys.h
+        run: |
+          gcc -xc++ assetsys.h -DASSETSYS_IMPLEMENTATION -DASSETSYS_RUN_TESTS -DSTRPOOL_IMPLEMENTATION
+      - name: run assetsys tests
+        run: ./a.out
+      - name: build vecmath.h
+        run: |
+          gcc -Wall -pedantic -Wno-invalid-utf8 -Wno-gnu-zero-variadic-macro-arguments -Wno-extra-semi -o vecmath_gcccpp -DVECMATH_RUN_TESTS -DVECMATH_USE_EXTERNAL_TESTFW -DVECMATH_GENERICS -xc++ vecmath.h -lm 
+      - name: run vecmath tests
+        run: ./vecmath_gcccpp
+  build-wasm:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: robinraju/release-downloader@v1
+        with:
+          repository: "mattiasgustavsson/template_project"
+          tag: "wasm-build-tools"
+          fileName: "wasm-build-tools-win.zip"
+      - name: install dependencies
+        run: 7z x wasm-build-tools-win.zip
+      - name: build vecmath.h
+        run: |          
+            '#include "vecmath.h"' | Out-File -Encoding ascii vecmath.c
+            wasm\node wasm\wajicup.js -cc "-Wall -pedantic -Wno-gnu-zero-variadic-macro-arguments -DVECMATH_RUN_TESTS -DVECMATH_USE_EXTERNAL_TESTFW -DVECMATH_GENERICS -DVECMATH_EXT_VECTOR_TYPE" vecmath.c vecmath.js
+            (Get-Content vecmath.js -Raw) -replace ',\s*(\w+\.__main_argc_argv\(1,\w+\))\s*,', ',process.exit($1),' | Set-Content vecmath.js
+      - name: run vecmath tests
+        run: wasm\node vecmath.js
