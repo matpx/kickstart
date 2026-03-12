@@ -1,11 +1,15 @@
-CXX := g++
-CXXFLAGS := -Wall -Wextra -std=c++20 -nostdlib++ -fno-rtti -fno-exceptions -isystem libs/
-LDFLAGS := -nostdlib++ -lm
+CXX ?= g++
+
+CXXFLAGS += -Wall -Wextra -std=c++20 -isystem libs/
+CXXFLAGS += -nostdlib++ -fno-rtti -fno-exceptions
+
+LDFLAGS += -lm
+LDFLAGS += -nostdlib++
 
 SRC := \
 	main.cpp
 
-TARGET := kickstart
+TARGET ?= kickstart
 
 .PHONY: all debug speed size clean
 
