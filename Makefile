@@ -1,11 +1,11 @@
 CC  := gcc
 CXX := g++
 
-COMMONFLAGS := -Wall -Wextra -Werror -march=x86-64-v3
+COMMONFLAGS := -Wall -Wextra -Werror -isystem libs/ -march=x86-64-v3
 
 CFLAGS := $(COMMONFLAGS) -std=c11
 
-CXXFLAGS := $(COMMONFLAGS) -std=c++20 -isystem libs/
+CXXFLAGS := $(COMMONFLAGS) -std=c++20
 CXXFLAGS += -nostdlib++ -fno-rtti -fno-exceptions
 
 LDFLAGS := -lm
