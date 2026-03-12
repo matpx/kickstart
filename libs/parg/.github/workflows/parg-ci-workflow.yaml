@@ -1,0 +1,80 @@
+name: parg CI
+
+on: [push, pull_request]
+
+jobs:
+  windows:
+    name: Windows ${{ matrix.config.name }}
+    runs-on: windows-2022
+
+    strategy:
+      matrix:
+        config:
+          - name: MSVC x64
+            generator: Visual Studio 17 2022
+            cmake-flags: -A x64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -G "${{ matrix.config.generator }}" ${{ matrix.config.cmake-flags }} -B build
+
+      - name: Build
+        run: cd build && cmake --build . --config Debug
+
+      - name: Test
+        run: cd build && ctest -V --output-on-failure --interactive-debug-mode 0 -C Debug
+
+  linux:
+    name: Linux ${{ matrix.config.name }}
+    runs-on: ubuntu-latest
+    env:
+      CC: ${{ matrix.config.cc }}
+
+    strategy:
+      matrix:
+        config:
+          - name: Clang UBSan
+            cc: clang
+            cmake-flags: -DCMAKE_C_FLAGS_DEBUG='-g -fsanitize=undefined'
+
+          - name: Clang ASan
+            cc: clang
+            cmake-flags: -DCMAKE_C_FLAGS_DEBUG='-O1 -g -fsanitize=address -fno-omit-frame-pointer'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake ${{ matrix.config.cmake-flags }} -DCMAKE_BUILD_TYPE=Debug -B build
+
+      - name: Build
+        run: cd build && cmake --build . --verbose
+
+      - name: Test
+        run: cd build && ctest -V --output-on-failure --interactive-debug-mode 0
+
+  coverage:
+    name: Linux Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -DCMAKE_C_FLAGS_DEBUG='-g -O0 --coverage' -DCMAKE_BUILD_TYPE=Debug -B build
+
+      - name: Build
+        run: cd build && cmake --build . --verbose
+
+      - name: Test
+        run: cd build && ctest -V --output-on-failure --interactive-debug-mode 0
+
+      - name: Generate coverage
+        run: cd build && gcov -b CMakeFiles/parg.dir/parg.c.gcno -o CMakeFiles/parg.dir
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./build/parg.c.gcov
