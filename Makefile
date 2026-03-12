@@ -1,6 +1,11 @@
+CC ?= gcc
 CXX ?= g++
 
-CXXFLAGS += -Wall -Wextra -std=c++20 -isystem libs/
+COMMONFLAGS += -Wall -Wextra -Werror
+
+CFLAGS += $(COMMONFLAGS) -std=c11
+
+CXXFLAGS += $(COMMONFLAGS) -std=c++20 -isystem libs/
 CXXFLAGS += -nostdlib++ -fno-rtti -fno-exceptions
 
 LDFLAGS += -lm

@@ -4,3 +4,4 @@ CompileFlags:
     - "libs/"
     - "-Wall"
     - "-Wextra"
+    - "-Werror"
