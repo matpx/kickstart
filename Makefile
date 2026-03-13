@@ -8,7 +8,7 @@ WARN_COMMON := \
 	-Wdouble-promotion -Wimplicit-fallthrough \
 	-Wnull-dereference -Wcast-align
 
-WARN_CFLAGS   := \
+WARN_CFLAGS := \
 	$(WARN_COMMON) \
 	-Wstrict-prototypes -Wmissing-prototypes
 
