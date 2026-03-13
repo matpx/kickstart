@@ -39,9 +39,9 @@ debug: CXXFLAGS += -g -Og
 debug: LDFLAGS += -g -Og
 debug: $(TARGET)
 
-safe: CFLAGS   += -g -O2 $(SAFETY_CFLAGS)
-safe: CXXFLAGS += -g -O2 $(SAFETY_CFLAGS)
-safe: LDFLAGS  += -g $(SAFETY_LDFLAGS)
+safe: CFLAGS   += -O2 $(SAFETY_CFLAGS)
+safe: CXXFLAGS += -O2 $(SAFETY_CFLAGS)
+safe: LDFLAGS  += $(SAFETY_LDFLAGS)
 safe: $(TARGET)
 
 fast: CFLAGS   += -O3 -flto=auto -DNDEBUG
