@@ -6,11 +6,12 @@ WARN_COMMON := \
 	-Wformat -Wformat=2 -Werror=format-security \
 	-Wconversion -Wsign-conversion -Wshadow \
 	-Wdouble-promotion -Wimplicit-fallthrough \
-	-Wnull-dereference -Wcast-align
+	-Wnull-dereference -Wcast-align -Wtrampolines
 
 WARN_CFLAGS := \
 	$(WARN_COMMON) \
-	-Wstrict-prototypes -Wmissing-prototypes
+	-Wstrict-prototypes -Wmissing-prototypes \
+	-Werror=int-conversion
 
 WARN_CXXFLAGS := \
 	$(WARN_COMMON) \
@@ -32,6 +33,10 @@ SAFETY_CFLAGS := \
 	-ftrivial-auto-var-init=zero \
 	-fcf-protection=full \
 	-fstrict-flex-arrays=3 \
+	-fzero-init-padding-bits=all \
+	-fno-delete-null-pointer-checks \
+	-fno-strict-overflow \
+	-fno-strict-aliasing \
 	-U_FORTIFY_SOURCE \
 	-D_FORTIFY_SOURCE=3 \
 	-D_GLIBCXX_ASSERTIONS \
