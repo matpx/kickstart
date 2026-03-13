@@ -50,8 +50,8 @@ fast: LDFLAGS  += -flto=auto
 fast: $(TARGET)
 	strip $(TARGET)
 
-size: CFLAGS   += -Oz -flto=auto -DNDEBUG
-size: CXXFLAGS += -Oz -flto=auto -DNDEBUG
+size: CFLAGS   += -Os -flto=auto -DNDEBUG
+size: CXXFLAGS += -Os -flto=auto -DNDEBUG
 size: LDFLAGS  += -flto=auto
 size: $(TARGET)
 	strip $(TARGET)
