@@ -1,57 +1,22 @@
 CC  := gcc
 CXX := g++
 
-WARN_COMMON := \
+WARN_FLAGS := \
 	-Wall -Wextra -Wpedantic -Werror \
-	-Wformat -Wformat=2 -Werror=format-security \
-	-Wconversion -Wsign-conversion -Wshadow \
-	-Wdouble-promotion -Wimplicit-fallthrough \
-	-Wnull-dereference -Wcast-align -Wtrampolines
+	-Wformat -Wformat=2 -Wconversion -Wimplicit-fallthrough \
+	-Werror=format-security -Wtrampolines \
+	-fzero-init-padding-bits=all
 
-WARN_CFLAGS := \
-	$(WARN_COMMON) \
-	-Wstrict-prototypes -Wmissing-prototypes \
-	-Werror=int-conversion
-
-WARN_CXXFLAGS := \
-	$(WARN_COMMON) \
-	-Wold-style-cast -Woverloaded-virtual \
-	-Wnon-virtual-dtor -Wsuggest-override
-
-COMMONFLAGS := -isystem libs/ -march=x86-64-v3
-CFLAGS   := $(COMMONFLAGS) $(WARN_CFLAGS) -std=c11
-CXXFLAGS := $(COMMONFLAGS) $(WARN_CXXFLAGS) -std=c++20
+COMMONFLAGS := $(WARN_FLAGS) -isystem libs/ -march=x86-64-v3
+CFLAGS   := $(COMMONFLAGS) -std=c11
+CXXFLAGS := $(COMMONFLAGS) -std=c++20
 CXXFLAGS += -nostdlib++ -fno-rtti -fno-exceptions
 
 LDFLAGS := -lm
 LDFLAGS += -nostdlib++
 
-SAFETY_CFLAGS := \
-	-fno-omit-frame-pointer \
-	-fstack-clash-protection \
-	-fstack-protector-strong \
-	-ftrivial-auto-var-init=zero \
-	-fcf-protection=full \
-	-fstrict-flex-arrays=3 \
-	-fzero-init-padding-bits=all \
-	-fno-delete-null-pointer-checks \
-	-fno-strict-overflow \
-	-fno-strict-aliasing \
-	-U_FORTIFY_SOURCE \
-	-D_FORTIFY_SOURCE=3 \
-	-D_GLIBCXX_ASSERTIONS \
-	-fPIE \
-	-fsanitize=undefined
-
-SAFETY_LDFLAGS := \
-	-pie \
-	-Wl,-z,nodlopen \
-	-Wl,-z,noexecstack \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-Wl,--as-needed \
-	-Wl,--no-copy-dt-needed-entries \
-	-fsanitize=undefined
+SAFETY_CFLAGS := -fhardened -fsanitize=undefined
+SAFETY_LDFLAGS := -fhardened -fsanitize=undefined
 
 CSRC   :=
 CXXSRC := main.cpp
@@ -74,9 +39,9 @@ debug: CXXFLAGS += -g -Og $(SAFETY_CFLAGS)
 debug: LDFLAGS += -g -Og $(SAFETY_LDFLAGS)
 debug: $(TARGET)
 
-safe: CFLAGS   += -O2 -flto=auto $(SAFETY_CFLAGS)
-safe: CXXFLAGS += -O2 -flto=auto $(SAFETY_CFLAGS)
-safe: LDFLAGS  += -flto=auto $(SAFETY_LDFLAGS)
+safe: CFLAGS   += -O2 $(SAFETY_CFLAGS)
+safe: CXXFLAGS += -O2 $(SAFETY_CFLAGS)
+safe: LDFLAGS  += $(SAFETY_LDFLAGS)
 safe: $(TARGET)
 
 fast: CFLAGS   += -O3 -flto=auto -DNDEBUG
