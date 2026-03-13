@@ -35,7 +35,8 @@ SAFETY_CFLAGS := \
 	-U_FORTIFY_SOURCE \
 	-D_FORTIFY_SOURCE=3 \
 	-D_GLIBCXX_ASSERTIONS \
-	-fPIE
+	-fPIE \
+	-fsanitize=undefined
 
 SAFETY_LDFLAGS := \
 	-pie \
@@ -44,7 +45,8 @@ SAFETY_LDFLAGS := \
 	-Wl,-z,relro \
 	-Wl,-z,now \
 	-Wl,--as-needed \
-	-Wl,--no-copy-dt-needed-entries
+	-Wl,--no-copy-dt-needed-entries \
+	-fsanitize=undefined
 
 CSRC   :=
 CXXSRC := main.cpp
@@ -67,9 +69,9 @@ debug: CXXFLAGS += -g -Og $(SAFETY_CFLAGS)
 debug: LDFLAGS += -g -Og $(SAFETY_LDFLAGS)
 debug: $(TARGET)
 
-safe: CFLAGS   += -O2 -flto=auto -fsanitize=undefined $(SAFETY_CFLAGS)
-safe: CXXFLAGS += -O2 -flto=auto -fsanitize=undefined $(SAFETY_CFLAGS)
-safe: LDFLAGS  += -flto=auto -fsanitize=undefined $(SAFETY_LDFLAGS)
+safe: CFLAGS   += -O2 -flto=auto $(SAFETY_CFLAGS)
+safe: CXXFLAGS += -O2 -flto=auto $(SAFETY_CFLAGS)
+safe: LDFLAGS  += -flto=auto $(SAFETY_LDFLAGS)
 safe: $(TARGET)
 
 fast: CFLAGS   += -O3 -flto=auto -DNDEBUG
