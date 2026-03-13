@@ -34,14 +34,14 @@ OBJ := $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
 
 all: debug
 
-debug: CFLAGS   += -g -Og $(SAFETY_CFLAGS)
-debug: CXXFLAGS += -g -Og $(SAFETY_CFLAGS)
-debug: LDFLAGS += -g -Og $(SAFETY_LDFLAGS)
+debug: CFLAGS   += -g -Og
+debug: CXXFLAGS += -g -Og
+debug: LDFLAGS += -g -Og
 debug: $(TARGET)
 
-safe: CFLAGS   += -O2 $(SAFETY_CFLAGS)
-safe: CXXFLAGS += -O2 $(SAFETY_CFLAGS)
-safe: LDFLAGS  += $(SAFETY_LDFLAGS)
+safe: CFLAGS   += -g -O2 $(SAFETY_CFLAGS)
+safe: CXXFLAGS += -g -O2 $(SAFETY_CFLAGS)
+safe: LDFLAGS  += -g $(SAFETY_LDFLAGS)
 safe: $(TARGET)
 
 fast: CFLAGS   += -O3 -flto=auto -DNDEBUG
