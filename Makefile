@@ -15,8 +15,8 @@ CXXFLAGS += -nostdlib++ -fno-rtti -fno-exceptions
 LDFLAGS := -lm
 LDFLAGS += -nostdlib++
 
-SAFETY_CFLAGS := -fno-omit-frame-pointer -fhardened -fsanitize=undefined
-SAFETY_LDFLAGS := -fno-omit-frame-pointer -fhardened -fsanitize=undefined
+SAFETY_CFLAGS := -fno-omit-frame-pointer -fhardened -fsanitize=undefined -fsanitize-trap=undefined
+SAFETY_LDFLAGS := -fno-omit-frame-pointer -fhardened -fsanitize=undefined -fsanitize-trap=undefined
 
 CSRC   :=
 CXXSRC := main.cpp
@@ -34,9 +34,9 @@ OBJ := $(CSRC:.c=.o) $(CXXSRC:.cpp=.o)
 
 all: debug
 
-debug: CFLAGS   += -g -Og
-debug: CXXFLAGS += -g -Og
-debug: LDFLAGS += -g -Og
+debug: CFLAGS   += -g -Og $(SAFETY_CFLAGS)
+debug: CXXFLAGS += -g -Og $(SAFETY_CFLAGS)
+debug: LDFLAGS += -g -Og $(SAFETY_LDFLAGS)
 debug: $(TARGET)
 
 safe: CFLAGS   += -O2 $(SAFETY_CFLAGS)
