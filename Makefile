@@ -15,8 +15,8 @@ CXXFLAGS += -nostdlib++ -fno-rtti -fno-exceptions
 LDFLAGS := -lm
 LDFLAGS += -nostdlib++
 
-SAFETY_CFLAGS := -fhardened -fsanitize=undefined
-SAFETY_LDFLAGS := -fhardened -fsanitize=undefined
+SAFETY_CFLAGS := -fno-omit-frame-pointer -fhardened -fsanitize=undefined
+SAFETY_LDFLAGS := -fno-omit-frame-pointer -fhardened -fsanitize=undefined
 
 CSRC   :=
 CXXSRC := main.cpp
