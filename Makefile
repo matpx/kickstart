@@ -10,6 +10,10 @@ CXXFLAGS += -nostdlib++ -fno-rtti -fno-exceptions
 LDFLAGS := -lm
 LDFLAGS += -nostdlib++
 
+ifeq ($(OS),Windows_NT)
+  LDFLAGS += -lgdi32
+endif
+
 CSRC :=
 CXXSRC := main.cpp
 
