@@ -19,8 +19,7 @@ int main() {
     hints.minor = 3;
     RGFW_setGlobalHints_OpenGL(&hints);
 
-    RGFW_window *window = RGFW_createWindow(
-        "Kickstart", 0, 0, 800, 600, RGFW_windowCenter | RGFW_windowOpenGL);
+    RGFW_window *window = RGFW_createWindow("Kickstart", 0, 0, 800, 600, RGFW_windowCenter | RGFW_windowOpenGL);
 
     RGFW_window_setExitKey(window, RGFW_escape);
     RGFW_window_makeCurrentContext_OpenGL(window);
